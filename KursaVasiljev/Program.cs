@@ -59,6 +59,7 @@ await binSerializer.Write(groups, "data.bin");
 
 var rawDataXml = await xmlSerializer.Read<Group[]>("raw_data.xml");
 var rawDataJson = await jsonSerializer.Read<Group[]>("raw_data.json");
+var rawDataBin = await binSerializer.Read<Group[]>("raw_data.bin");
 var dataXml = await xmlSerializer.Read<Group[]>("data.xml");
 var dataJson = await jsonSerializer.Read<Group[]>("data.json");
 var dataBin = await binSerializer.Read<Group[]>("data.bin");

@@ -1,6 +1,4 @@
-﻿using MessagePack;
-
-namespace KursaVasiljev.Models
+﻿namespace KursaVasiljev.Models
 {
     public class Person
     {

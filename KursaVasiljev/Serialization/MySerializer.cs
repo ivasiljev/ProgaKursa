@@ -1,6 +1,4 @@
-﻿using KursaVasiljev.Models;
-
-namespace KursaVasiljev.Serialization
+﻿namespace KursaVasiljev.Serialization
 {
     internal abstract class MySerializer
     {

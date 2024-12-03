@@ -1,5 +1,5 @@
-﻿using KursaVasiljev.Models;
-using MessagePack;
+﻿using KursaVasiljev.Common;
+using KursaVasiljev.Models;
 using System.Xml.Serialization;
 
 namespace KursaVasiljev
@@ -8,7 +8,7 @@ namespace KursaVasiljev
     {
         public int Id { get; set; }
         [XmlIgnore]
-        public int[,] Marks { get => _marks; set { _marks = value; OnMarksPropertyChanged(); } }
+        public int[,] Marks { get => _marks; set { _marks = value; _onMarksPropertyChanged(); } }
         public double AverageMark { get; set; }
         public int Misses { get; set; }
 
@@ -16,43 +16,13 @@ namespace KursaVasiljev
         [XmlArray("Marks")]
         public int[] MarksDto
         {
-            get { return Flatten(Marks); }
-            set { Marks = Expand(value, 2); }
-        }
-
-        public static T[] Flatten<T>(T[,] arr)
-        {
-            int rows0 = arr.GetLength(0);
-            int rows1 = arr.GetLength(1);
-            T[] arrFlattened = new T[rows0 * rows1];
-            for (int j = 0; j < rows1; j++)
-            {
-                for (int i = 0; i < rows0; i++)
-                {
-                    var test = arr[i, j];
-                    arrFlattened[i + j * rows0] = arr[i, j];
-                }
-            }
-            return arrFlattened;
-        }
-        public static T[,] Expand<T>(T[] arr, int rows0)
-        {
-            int length = arr.GetLength(0);
-            int rows1 = length / rows0;
-            T[,] arrExpanded = new T[rows0, rows1];
-            for (int j = 0; j < rows1; j++)
-            {
-                for (int i = 0; i < rows0; i++)
-                {
-                    arrExpanded[i, j] = arr[i + j * rows0];
-                }
-            }
-            return arrExpanded;
+            get { return MultidimensionalArraysUtils.Flatten(Marks); }
+            set { Marks = MultidimensionalArraysUtils.Expand(value, 2); }
         }
 
         private int[,] _marks;
 
-        public void OnMarksPropertyChanged()
+        private void _onMarksPropertyChanged()
         {
             var sum = 0d;
             for (int i = 0; i < _marks.GetLength(0); i++) // rows

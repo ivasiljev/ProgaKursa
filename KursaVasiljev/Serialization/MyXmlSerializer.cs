@@ -4,8 +4,6 @@ namespace KursaVasiljev.Serialization
 {
     internal class MyXmlSerializer : MySerializer
     {
-
-
         public override Task<T> Read<T>(string path)
         {
             var mySerializer = new XmlSerializer(typeof(T));

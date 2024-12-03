@@ -1,6 +1,5 @@
 ﻿using KursaVasiljev.Common;
 using KursaVasiljev.Interfaces;
-using MessagePack;
 using System.Text;
 
 namespace KursaVasiljev.Models

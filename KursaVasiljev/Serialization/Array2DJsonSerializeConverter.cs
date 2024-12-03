@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace KursaVasiljev.Serialization
 {
-    public class Array2DConverter : JsonConverterFactory
+    internal class Array2DConverter : JsonConverterFactory
     {
         public override bool CanConvert(Type typeToConvert) => typeToConvert.IsArray && typeToConvert.GetArrayRank() == 2;
 

@@ -8,19 +8,19 @@ namespace KursaVasiljev.Managers
         private readonly Random _rand = new();
         private readonly StundentsManagerConfiguration _configuration = configuration;
 
-        public List<Student> StudentsList { get; set; } = new List<Student>();
-
         public Student[] CreateRandomStudents(int count)
         {
             var result = new Student[count];
             for (int i = 0; i < count; i++)
             {
-                result[i] = CreateRandomStudent();
+                result[i] = _createRandomStudent();
             }
             return result;
         }
 
-        public Student CreateRandomStudent()
+        public Student CreateRandomStudent() => _createRandomStudent();
+
+        private Student _createRandomStudent()
         {
             int[,] marks = new int[_configuration.MarksRowsCount, _configuration.MarksColumnsCount];
             for (int i = 0; i < _configuration.MarksRowsCount; i++)
@@ -40,7 +40,6 @@ namespace KursaVasiljev.Managers
                 Surname = Constants.Surnames[_rand.Next(Constants.Surnames.Length)],
                 Marks = marks
             };
-            StudentsList.Add(student);
             return student;
         }
     }
