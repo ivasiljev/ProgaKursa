@@ -2,7 +2,7 @@
 
 namespace KursaVasiljev.Extensions
 {
-    public static class MathExtensions
+    internal static class MathExtensions
     {
         public static K OwnSum<T, K>(this T[] array, Func<T, K> selector) where T : class where K : INumber<K>
         {

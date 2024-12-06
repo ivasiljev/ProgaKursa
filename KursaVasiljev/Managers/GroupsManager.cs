@@ -6,18 +6,27 @@ namespace KursaVasiljev.Managers
     {
         private readonly StudentsManager _studentsManager = studentsManager;
 
-        public Group CreateGroup(string groupName, Student[] students)
+        public List<Group> Groups { get; private set; } = [];
+
+        public Group CreateGroup(string groupName, IEnumerable<Student> students)
         {
-            return new Group
+            return _addGroup(groupName, students);
+        }
+
+        private Group _addGroup(string name, IEnumerable<Student> students)
+        {
+            var group = new Group
             {
-                Name = groupName,
-                Students = students,
+                Name = name,
+                Students = students.ToArray(),
             };
+            Groups.Add(group);
+            return group;
         }
 
         public Group CreateGroupWithStudents(string groupName, int studentsCount)
         {
-            return CreateGroup(groupName, _studentsManager.CreateRandomStudents(studentsCount));
+            return _addGroup(groupName, _studentsManager.CreateRandomStudents(studentsCount));
         }
     }
 }

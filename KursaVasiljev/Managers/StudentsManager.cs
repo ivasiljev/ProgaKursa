@@ -6,7 +6,10 @@ namespace KursaVasiljev.Managers
     {
         private static int _idCounter = 0;
         private readonly Random _rand = new();
+        private readonly CustomRandom _customRandom = new();
         private readonly StundentsManagerConfiguration _configuration = configuration;
+
+        public List<Student> Students { get; private set; } = [];
 
         public Student[] CreateRandomStudents(int count)
         {
@@ -23,23 +26,40 @@ namespace KursaVasiljev.Managers
         private Student _createRandomStudent()
         {
             int[,] marks = new int[_configuration.MarksRowsCount, _configuration.MarksColumnsCount];
+            var isLikelyBadStudent = _rand.Next(0, 7) == 0; // 12.5% that this student has a good chance to be a bad student
             for (int i = 0; i < _configuration.MarksRowsCount; i++)
             {
                 for (int j = 0; j < _configuration.MarksColumnsCount; j++)
                 {
-                    marks[i, j] = (int)_rand.Next(_configuration.MinMark, _configuration.MaxMark);
+                    marks[i, j] = _customRandom.Next(_configuration.MinMark, _configuration.MaxMark);
+                    if (i > 0 && marks[i, j] == 2)
+                    {
+                        marks[i - 1, j] = 2;
+                    }
                 }
             }
 
+            return _addStudent(
+                age: _customRandom.Next(_configuration.MinAge, _configuration.MaxAge, true),
+                misses: _customRandom.Next(_configuration.MinMisses, _configuration.MaxMisses, true),
+                name: Constants.Names[_rand.Next(Constants.Names.Length)],
+                surname: Constants.Surnames[_rand.Next(Constants.Surnames.Length)],
+                marks: marks
+            );
+        }
+
+        private Student _addStudent(int age, int misses, string name, string surname, int[,] marks)
+        {
             var student = new Student
             {
                 Id = _idCounter++,
-                Age = _rand.Next(_configuration.MinAge, _configuration.MaxAge),
-                Misses = _rand.Next(_configuration.MinMisses, _configuration.MaxMisses),
-                Name = Constants.Names[_rand.Next(Constants.Names.Length)],
-                Surname = Constants.Surnames[_rand.Next(Constants.Surnames.Length)],
+                Age = age,
+                Misses = misses,
+                Name = name,
+                Surname = surname,
                 Marks = marks
             };
+            Students.Add(student);
             return student;
         }
     }

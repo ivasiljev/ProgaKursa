@@ -2,7 +2,6 @@
 using System.Text;
 using KursaVasiljev.Extensions;
 using KursaVasiljev.Common;
-using MessagePack;
 
 namespace KursaVasiljev.Models
 {
@@ -10,6 +9,11 @@ namespace KursaVasiljev.Models
     {
         public string Name { get; set; }
         public Student[] Students { get; set; }
+
+        public void AddStudent(Student student)
+        {
+            Students = Students.Append(student).ToArray();
+        }
 
         public override string ToString()
         {

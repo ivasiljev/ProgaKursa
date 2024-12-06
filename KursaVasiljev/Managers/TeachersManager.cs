@@ -8,18 +8,34 @@ namespace KursaVasiljev.Managers
         private readonly Random _rand = new();
         private readonly TeachersManagerConfiguration _configuration = configuration;
 
-        public Teacher CreateTeacher(Group[] groups, string seniority, string subject)
+        public List<Teacher> Teachers { get; private set; } = [];
+
+        public Teacher CreateTeacher(IEnumerable<Group> groups, string seniority, string subject)
         {
-            var teacher = new Teacher()
-            {
-                Age = _rand.Next(_configuration.MinAge, _configuration.MaxAge),
-                Name = Constants.Names[_rand.Next(Constants.Names.Length)],
-                Surname = Constants.Surnames[_rand.Next(Constants.Surnames.Length)],
-                Groups = groups,
-                Seniority = seniority,
-                Subject = subject,
-            };
+            var teacher = _addTeacher(
+                age: _rand.Next(_configuration.MinAge, _configuration.MaxAge),
+                name: Constants.Names[_rand.Next(Constants.Names.Length)],
+                surname: Constants.Surnames[_rand.Next(Constants.Surnames.Length)],
+                groups: groups,
+                seniority: seniority,
+                subject: subject
+            );
             return teacher;
+        }
+
+        private Teacher _addTeacher(int age, string name, string surname, IEnumerable<Group> groups, string seniority, string subject)
+        {
+            var group = new Teacher
+            {
+                Age = age,
+                Name = name,
+                Surname = surname,
+                Groups = groups.ToArray(),
+                Seniority = seniority,
+                Subject = subject
+            };
+            Teachers.Add(group);
+            return group;
         }
     }
 

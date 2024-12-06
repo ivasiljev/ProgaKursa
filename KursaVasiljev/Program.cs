@@ -2,7 +2,9 @@
 using KursaVasiljev.Managers;
 using KursaVasiljev.Models;
 using KursaVasiljev.Serialization;
+using KursaVasiljev.Extensions;
 
+#region Initialization
 var studentsManager = new StudentsManager(new StundentsManagerConfiguration
 {
     MarksRowsCount = 2,
@@ -26,11 +28,33 @@ var jsonSerializer = new MyJsonSerializer();
 var xmlSerializer = new MyXmlSerializer();
 var binSerializer = new MyBinarySerializer();
 
-Group[] groups = [
-    groupsManager.CreateGroupWithStudents("Grp1", 10),
-    groupsManager.CreateGroupWithStudents("Grp2", 12),
-    groupsManager.CreateGroupWithStudents("Grp3", 14)
-];
+var rand = new Random();
+#endregion
+
+#region Fill data
+const int InitStudentsCount = 100;
+const int GroupsCount = 5;
+const int StudentsPerGroup = InitStudentsCount / GroupsCount;
+const int ExtraStudentsCount = 50;
+
+var initStudents = studentsManager.CreateRandomStudents(InitStudentsCount);
+var groups = new Group[GroupsCount];
+
+initStudents.Shuffle();
+
+for (int i = 0; i < GroupsCount; i++)
+{
+    var studentsToAddInGroup = initStudents.Skip(i * StudentsPerGroup).Take(StudentsPerGroup);
+    groups[i] = groupsManager.CreateGroup($"Group {i + 1}", studentsToAddInGroup);
+}
+
+var extraStudents = studentsManager.CreateRandomStudents(ExtraStudentsCount);
+
+foreach (var student in extraStudents)
+{
+    groups[rand.Next(0, GroupsCount - 1)].AddStudent(student);
+}
+#endregion
 
 await jsonSerializer.Write(groups, "raw_data.json");
 await xmlSerializer.Write(groups, "raw_data.xml");
@@ -40,26 +64,24 @@ foreach (var group in groups)
 {
     group.SortStudentsByAverageMark(SortDirection.Descending);
 }
-
 await jsonSerializer.Write(groups, "data.json");
 
 foreach (var group in groups)
 {
     group.SortStudentsByAverageMark(SortDirection.Ascending);
 }
-
 await xmlSerializer.Write(groups, "data.xml");
 
 foreach (var group in groups)
 {
     group.SortStudentsBySurnameAndName(SortDirection.Descending);
 }
-
 await binSerializer.Write(groups, "data.bin");
 
 var rawDataXml = await xmlSerializer.Read<Group[]>("raw_data.xml");
 var rawDataJson = await jsonSerializer.Read<Group[]>("raw_data.json");
 var rawDataBin = await binSerializer.Read<Group[]>("raw_data.bin");
+
 var dataXml = await xmlSerializer.Read<Group[]>("data.xml");
 var dataJson = await jsonSerializer.Read<Group[]>("data.json");
 var dataBin = await binSerializer.Read<Group[]>("data.bin");
@@ -75,6 +97,7 @@ foreach(var group in rawDataXml)
         Console.WriteLine(student.ToString());
     }
 }
+
 Console.WriteLine(Constants.ConsoleSeparator);
 Console.WriteLine("Данные из data.xml");
 Console.WriteLine(Constants.ConsoleSeparator);
@@ -86,6 +109,7 @@ foreach (var group in dataXml)
         Console.WriteLine(student.ToString());
     }
 }
+
 Console.WriteLine(Constants.ConsoleSeparator);
 Console.WriteLine("Данные из data.json");
 Console.WriteLine(Constants.ConsoleSeparator);
@@ -97,6 +121,7 @@ foreach (var group in dataJson)
         Console.WriteLine(student.ToString());
     }
 }
+
 Console.WriteLine(Constants.ConsoleSeparator);
 Console.WriteLine("Данные из data.bin");
 Console.WriteLine(Constants.ConsoleSeparator);
