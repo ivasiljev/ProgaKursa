@@ -2,7 +2,7 @@
 {
     internal static class IEnumerableExtensions
     {
-        private static Random _rand = new Random();
+        private static readonly Random _rand = new();
 
         public static void Shuffle<T>(this IList<T> list)
         {
